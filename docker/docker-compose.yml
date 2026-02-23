@@ -1,0 +1,82 @@
+services:
+  # ──────────────────────────────────────────────
+  # Kafka (KRaft mode — no Zookeeper)
+  # ──────────────────────────────────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft settings
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # Cluster settings
+      CLUSTER_ID: "flink-to-spark-rtm-bench"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Topic defaults
+      KAFKA_NUM_PARTITIONS: 16
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_RETENTION_HOURS: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ──────────────────────────────────────────────
+  # Flink (standalone: combined JM + TM)
+  # ──────────────────────────────────────────────
+  flink:
+    image: apache/flink:1.20.0-scala_2.12-java17
+    container_name: flink
+    ports:
+      - "8081:8081"
+    volumes:
+      - ../pipelines:/opt/flink-data/pipelines
+      - ../data_generator:/opt/flink-data/data_generator
+      - ./flink-conf/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: bash -c "
+      /opt/flink/bin/start-cluster.sh &&
+      tail -f /dev/null
+      "
+
+  # ──────────────────────────────────────────────
+  # Spark 4.1 (master + worker, 16 cores, 4g)
+  # ──────────────────────────────────────────────
+  spark:
+    image: apache/spark:4.1.0-scala2.13-java21-python3-r-ubuntu
+    container_name: spark
+    user: root
+    ports:
+      - "4040:4040"
+      - "8080:8080"
+    volumes:
+      - ../pipelines:/opt/spark-data/pipelines
+      - ../data_generator:/opt/spark-data/data_generator
+      - ./spark-conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: bash -c "
+      pip install pyarrow 'protobuf>=5.26' kafka-python-ng &&
+      /opt/spark/sbin/start-master.sh &&
+      /opt/spark/sbin/start-worker.sh spark://spark:7077 -c 16 -m 4g &&
+      tail -f /dev/null
+      "

@@ -1,0 +1,6 @@
+taskmanager.numberOfTaskSlots: 16
+taskmanager.memory.process.size: 4096m
+parallelism.default: 16
+state.backend: rocksdb
+state.checkpoints.dir: file:///tmp/flink-checkpoints
+execution.checkpointing.interval: 5000
