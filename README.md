@@ -4,6 +4,16 @@ Side-by-side implementations of 4 streaming patterns in **Apache Flink 1.20** an
 **Apache Spark 4.1 Real-Time Mode (RTM)**, with latency benchmarks and comprehensive
 migration documentation.
 
+<p align="center">
+  <img src="graphics/social-card.svg" alt="From Flink to Spark 4.1 Real-Time Mode" width="800">
+</p>
+
+## Migration Overview
+
+<p align="center">
+  <img src="graphics/migration-overview.svg" alt="Flink to Spark RTM migration flow" width="900">
+</p>
+
 ## What's Inside
 
 ### Pipelines (4 patterns, 2 implementations each)
@@ -15,6 +25,12 @@ migration documentation.
 | 03 | Sliding window avg | keyBy → SlidingWindow(5min,1min) → avg | groupBy + window(5min,1min) → avg | Yes |
 | 04 | Keyed state counter | KeyedProcessFunction + ValueState | transformWithState + StatefulProcessor | Semantic diff |
 
+### Pattern Comparison
+
+<p align="center">
+  <img src="graphics/pattern-comparison.svg" alt="Flink vs Spark API comparison grid" width="900">
+</p>
+
 ### Documentation
 
 | Document | Description |
@@ -23,6 +39,16 @@ migration documentation.
 | [Patterns](docs/patterns.md) | All 4 patterns explained side-by-side with behavioral differences |
 | [Limitations](docs/limitations.md) | Honest accounting of what RTM cannot do (yet) |
 | [Decision Framework](docs/decision-framework.md) | Flowchart: should you migrate from Flink to RTM? |
+
+<p align="center">
+  <img src="graphics/decision-flowchart.svg" alt="Should you migrate from Flink to Spark RTM? Decision flowchart" width="800">
+</p>
+
+### Benchmark Architecture
+
+<p align="center">
+  <img src="graphics/benchmark-architecture.svg" alt="Benchmark setup: Generator → Kafka → Flink/Spark → Latency Consumer" width="900">
+</p>
 
 ### Benchmarks
 

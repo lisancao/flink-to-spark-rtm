@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  decision-flowchart.svg
+  Decision framework flowchart: Should you migrate from Flink to Spark RTM?
+  Based on docs/decision-framework.md
+  Canvas: 1200 × 920  |  Background: #1a1a2e
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 920" width="1200" height="920"
+     role="img" aria-label="Decision flowchart for migrating from Flink to Spark RTM">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <!-- Arrow: default grey -->
+    <marker id="arrGrey" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#8892a4"/>
+    </marker>
+    <!-- Arrow: NO path (red) -->
+    <marker id="arrNo" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#E6526F"/>
+    </marker>
+    <!-- Arrow: YES path (green) -->
+    <marker id="arrYes" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#4ade80"/>
+    </marker>
+    <!-- Arrow: teal (migrate) -->
+    <marker id="arrTeal" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#00d4aa"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="920" fill="url(#bgGrad)"/>
+
+  <!-- ── Title ── -->
+  <text x="600" y="44" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">
+    Should You Migrate from Flink to Spark RTM?
+  </text>
+  <text x="600" y="64" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" fill="#8892a4" text-anchor="middle">
+    Decision framework based on disqualification checklist  ·  docs/decision-framework.md
+  </text>
+  <line x1="60" y1="78" x2="1140" y2="78" stroke="#2d3a52" stroke-width="1"/>
+
+  <!-- ══════════════════════════════════
+       LEGEND (top right)
+  ══════════════════════════════════ -->
+  <rect x="940" y="88" width="220" height="72" rx="6" fill="#1e2a3a" stroke="#2d3a52" stroke-width="1"/>
+  <text x="1050" y="106" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="700" fill="#8892a4" text-anchor="middle" letter-spacing="1.5">LEGEND</text>
+  <!-- YES -->
+  <line x1="958" y1="120" x2="988" y2="120" stroke="#4ade80" stroke-width="2.5" marker-end="url(#arrYes)"/>
+  <text x="998" y="124" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#4ade80">YES / continue</text>
+  <!-- NO -->
+  <line x1="958" y1="140" x2="988" y2="140" stroke="#E6526F" stroke-width="2.5" marker-end="url(#arrNo)"/>
+  <text x="998" y="144" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#E6526F">NO / blocker</text>
+  <!-- Migrate -->
+  <line x1="958" y1="154" x2="988" y2="154" stroke="#00d4aa" stroke-width="2.5" marker-end="url(#arrTeal)"/>
+  <text x="998" y="158" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#00d4aa">Migrate</text>
+
+  <!-- ══════════════════════════════════
+       HELPERS: Reusable node shapes via groups
+       Layout:
+         START node         y=108
+         Q1 Session         y=165
+         Q2 Stream-join     y=245
+         Q3 sub-10ms        y=325
+         Q4 CEP             y=405
+         Q5 Kafka/Kinesis   y=485
+         Q6 Already Spark   y=565
+         Q7 Python/SQL team y=645
+         STAY (Flink)       x=90,  per question
+         EVALUATE BOX       y=720
+         MEETS NEEDS Q      y=790
+         MIGRATE            x=1060 y=840
+         STAY FINAL         x=90   y=840
+  ══════════════════════════════════ -->
+
+  <!-- ── START node ── -->
+  <rect x="390" y="96" width="420" height="48" rx="24" fill="#7c3aed" filter="url(#shadow)"/>
+  <text x="600" y="125" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle"
+        letter-spacing="0.3">Start: Evaluate Flink → Spark RTM Migration</text>
+
+  <!-- Arrow: START → Q1 -->
+  <line x1="600" y1="144" x2="600" y2="160" stroke="#8892a4" stroke-width="2" marker-end="url(#arrGrey)"/>
+
+  <!-- ── Q1: Session windows? ── -->
+  <!-- Diamond shape -->
+  <polygon points="600,162 740,198 600,234 460,198"
+           fill="#1e2a3a" stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="193" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Need session windows?</text>
+  <text x="600" y="210" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">RTM does not support session windows</text>
+
+  <!-- Q1 YES → STAY Flink (left) -->
+  <line x1="460" y1="198" x2="260" y2="198" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="370" y="191" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">YES</text>
+  <rect x="100" y="176" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="195" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="212" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Session windows blocker</text>
+
+  <!-- Q1 NO → Q2 -->
+  <line x1="600" y1="234" x2="600" y2="248" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="614" y="244" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80">NO</text>
+
+  <!-- ── Q2: Stream-stream joins? ── -->
+  <polygon points="600,250 740,286 600,322 460,286"
+           fill="#1e2a3a" stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="280" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Need stream-stream joins?</text>
+  <text x="600" y="297" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">RTM: no unbounded stream joins</text>
+
+  <!-- Q2 YES → STAY (left) -->
+  <line x1="460" y1="286" x2="260" y2="286" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="370" y="279" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">YES</text>
+  <rect x="100" y="264" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="283" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="300" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Join blocker</text>
+
+  <!-- Q2 NO → Q3 -->
+  <line x1="600" y1="322" x2="600" y2="336" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="614" y="332" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80">NO</text>
+
+  <!-- ── Q3: sub-10ms latency? ── -->
+  <polygon points="600,338 740,374 600,410 460,374"
+           fill="#1e2a3a" stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="368" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Need sub-10ms p99 latency?</text>
+  <text x="600" y="385" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">RTM stateless: 5–15ms  ·  Flink: sub-ms</text>
+
+  <!-- Q3 YES → STAY (left) -->
+  <line x1="460" y1="374" x2="260" y2="374" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="370" y="367" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">YES</text>
+  <rect x="100" y="352" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="371" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="388" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Latency blocker</text>
+
+  <!-- Q3 NO → Q4 -->
+  <line x1="600" y1="410" x2="600" y2="424" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="614" y="420" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80">NO</text>
+
+  <!-- ── Q4: CEP patterns? ── -->
+  <polygon points="600,426 740,462 600,498 460,462"
+           fill="#1e2a3a" stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="456" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Need CEP / Async I/O?</text>
+  <text x="600" y="473" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">FlinkCEP has no Spark equivalent</text>
+
+  <!-- Q4 YES → STAY (left) -->
+  <line x1="460" y1="462" x2="260" y2="462" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="370" y="455" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">YES</text>
+  <rect x="100" y="440" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="459" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="476" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">CEP blocker</text>
+
+  <!-- Q4 NO → Q5 -->
+  <line x1="600" y1="498" x2="600" y2="512" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="614" y="508" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80">NO</text>
+
+  <!-- ── Q5: Source is Kafka or Kinesis? ── -->
+  <polygon points="600,514 760,552 600,590 440,552"
+           fill="#1e2a3a" stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="546" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Source is Kafka or Kinesis EFO?</text>
+  <text x="600" y="563" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">RTM supports Kafka + Kinesis only</text>
+
+  <!-- Q5 NO → STAY (left) -->
+  <line x1="440" y1="552" x2="260" y2="552" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="360" y="544" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">NO</text>
+  <rect x="100" y="530" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="549" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="566" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Source blocker</text>
+
+  <!-- Q5 YES → Q6 -->
+  <line x1="600" y1="590" x2="600" y2="604" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="614" y="600" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80">YES</text>
+
+  <!-- ── Q6: Already using Spark for batch? ── -->
+  <polygon points="600,606 760,642 600,678 440,642"
+           fill="#1e2a3a" stroke="#00d4aa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="636" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Already using Spark for batch?</text>
+  <text x="600" y="653" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">Unified stack is strongest argument</text>
+
+  <!-- Q6 YES → EVALUATE (right branch) -->
+  <line x1="760" y1="642" x2="900" y2="642" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <text x="826" y="634" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80" text-anchor="middle">YES</text>
+
+  <!-- Q6 NO → Q7 -->
+  <line x1="600" y1="678" x2="600" y2="692" stroke="#8892a4" stroke-width="2" marker-end="url(#arrGrey)"/>
+  <text x="614" y="688" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11"
+        fill="#8892a4">NO</text>
+
+  <!-- ── Q7: Python/SQL team? ── -->
+  <polygon points="600,694 740,726 600,758 460,726"
+           fill="#1e2a3a" stroke="#00d4aa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="600" y="720" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Team is Python / SQL first?</text>
+  <text x="600" y="737" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">PySpark DataFrame is first-class RTM API</text>
+
+  <!-- Q7 NO → STAY WEAK (left) -->
+  <line x1="460" y1="726" x2="260" y2="726" stroke="#E6526F" stroke-width="2" marker-end="url(#arrNo)"/>
+  <text x="370" y="719" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">NO</text>
+  <rect x="100" y="704" width="148" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="174" y="723" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="174" y="740" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Java-only team</text>
+
+  <!-- Q7 YES → merge to EVALUATE -->
+  <path d="M 740 726 L 900 726 L 900 670"
+        stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#arrYes)"/>
+  <text x="816" y="720" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#4ade80" text-anchor="middle">YES</text>
+
+  <!-- ══════════════════════════════════
+       EVALUATE RTM BOX
+  ══════════════════════════════════ -->
+  <rect x="902" y="594" width="246" height="150" rx="10" fill="#0a2020"
+        stroke="#00d4aa" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1025" y="618" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#00d4aa" text-anchor="middle"
+        letter-spacing="0.5">Evaluate RTM</text>
+  <text x="918" y="638" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Prototype a pipeline</text>
+  <text x="918" y="655" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Set allowlistCheck=false (OSS)</text>
+  <text x="918" y="672" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Or use Databricks Runtime</text>
+  <text x="918" y="689" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Measure latency p50/p95/p99</text>
+  <text x="918" y="706" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Validate output correctness</text>
+  <text x="918" y="723" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Check output mode compat.</text>
+  <text x="918" y="738" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#8892a4">Run parallel for validation period</text>
+
+  <!-- Arrow: EVALUATE → MEETS NEEDS Q -->
+  <line x1="1025" y1="744" x2="1025" y2="760" stroke="#8892a4" stroke-width="2" marker-end="url(#arrGrey)"/>
+
+  <!-- ── Meets needs? diamond ── -->
+  <polygon points="1025,762 1130,796 1025,830 920,796"
+           fill="#1e2a3a" stroke="#00d4aa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1025" y="790" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">Meets latency and</text>
+  <text x="1025" y="806" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">correctness needs?</text>
+
+  <!-- YES → MIGRATE -->
+  <line x1="1130" y1="796" x2="1160" y2="796" stroke="#00d4aa" stroke-width="2.5" marker-end="url(#arrTeal)"/>
+  <!-- Migrate box -->
+  <rect x="1162" y="768" width="0" height="56" rx="0"/>
+  <!-- Extend canvas right a touch via clipping — instead show inline -->
+  <rect x="1078" y="840" width="200" height="52" rx="10"
+        fill="#0a2820" stroke="#00d4aa" stroke-width="2" filter="url(#shadow)"/>
+  <!-- Arrow YES down -->
+  <line x1="1025" y1="830" x2="1025" y2="844" stroke="#4ade80" stroke-width="2" marker-end="url(#arrYes)"/>
+  <!-- Actually route: YES right then down to Migrate -->
+  <!-- Re-route: YES → right to Migrate, NO → left stay -->
+  <!-- Cleaner: YES up-right, NO down-left. Let's place Migrate below and to the right -->
+
+  <!-- Migrate to Spark RTM box -->
+  <rect x="902" y="840" width="246" height="56" rx="10"
+        fill="#0a2820" stroke="#00d4aa" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="1025" y="864" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="15" font-weight="800" fill="#00d4aa" text-anchor="middle">Migrate to Spark RTM</text>
+  <text x="1025" y="884" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#4da89a" text-anchor="middle">Stateless first  ·  Stateful incrementally</text>
+
+  <!-- Arrow: meets needs? YES → Migrate -->
+  <line x1="1025" y1="830" x2="1025" y2="838" stroke="#00d4aa" stroke-width="2.5" marker-end="url(#arrTeal)"/>
+  <text x="1038" y="836" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#00d4aa">YES</text>
+
+  <!-- Arrow: meets needs? NO → Stay (left) -->
+  <path d="M 920 796 L 840 796 L 840 870 L 820 870"
+        stroke="#E6526F" stroke-width="2" fill="none" marker-end="url(#arrNo)"/>
+  <text x="882" y="788" font-family="'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700"
+        fill="#E6526F" text-anchor="middle">NO</text>
+  <rect x="624" y="848" width="190" height="44" rx="6" fill="#2a0a12" stroke="#E6526F" stroke-width="1.5"/>
+  <text x="719" y="867" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#E6526F" text-anchor="middle">Stay on Flink</text>
+  <text x="719" y="884" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">RTM doesn't meet requirements</text>
+  <!-- The NO arrow path to box -->
+  <line x1="820" y1="870" x2="816" y2="870" stroke="#E6526F" stroke-width="2"/>
+
+  <!-- Footer caption -->
+  <text x="600" y="906" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-style="italic" fill="#4a5568" text-anchor="middle">
+    Figure 4. Decision flowchart: follow the NO path through blockers to reach evaluation, then validate before committing to migration.
+  </text>
+</svg>

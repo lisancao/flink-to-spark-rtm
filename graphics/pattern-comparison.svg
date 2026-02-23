@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  pattern-comparison.svg
+  2×4 grid comparing Flink vs Spark for each of the 4 streaming patterns.
+  Canvas: 1200 × 820  |  Background: #1a1a2e
+  Left column: Flink (#E6526F)  |  Right column: Spark (#00d4aa)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" width="1200" height="820"
+     role="img" aria-label="Pattern comparison: Flink vs Spark RTM for 4 streaming patterns">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="flinkCellGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2a1520"/>
+      <stop offset="100%" style="stop-color:#1e1425"/>
+    </linearGradient>
+    <linearGradient id="sparkCellGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#091e20"/>
+      <stop offset="100%" style="stop-color:#081828"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="820" fill="url(#bgGrad)"/>
+
+  <!-- ── Header ── -->
+  <text x="600" y="48" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle"
+        letter-spacing="0.4">API Pattern Comparison</text>
+  <text x="600" y="70" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" fill="#8892a4" text-anchor="middle">
+    Flink 1.20 (Java DataStream)  vs  Spark 4.1 Real-Time Mode (PySpark)
+  </text>
+  <line x1="60" y1="84" x2="1140" y2="84" stroke="#2d3a52" stroke-width="1"/>
+
+  <!-- ── Column headers ── -->
+  <!-- Pattern column -->
+  <rect x="60" y="94" width="148" height="46" rx="6" fill="#1e2a3a"/>
+  <text x="134" y="122" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="12" font-weight="700" fill="#8892a4" text-anchor="middle"
+        letter-spacing="1">PATTERN</text>
+
+  <!-- Flink column header -->
+  <rect x="218" y="94" width="462" height="46" rx="6" fill="#E6526F" fill-opacity="0.15"
+        stroke="#E6526F" stroke-width="1.5"/>
+  <text x="360" y="113" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="15" font-weight="700" fill="#E6526F" text-anchor="middle"
+        letter-spacing="0.5">Apache Flink 1.20</text>
+  <text x="360" y="130" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#c97a8a" text-anchor="middle">Java  ·  DataStream API</text>
+
+  <!-- Spark column header -->
+  <rect x="690" y="94" width="450" height="46" rx="6" fill="#00d4aa" fill-opacity="0.12"
+        stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="915" y="113" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="15" font-weight="700" fill="#00d4aa" text-anchor="middle"
+        letter-spacing="0.5">Apache Spark 4.1 RTM</text>
+  <text x="915" y="130" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#4da89a" text-anchor="middle">Python  ·  DataFrame API</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 1 — Stateless Passthrough
+  ═══════════════════════════════════════ -->
+  <!-- Pattern label cell -->
+  <rect x="60" y="152" width="148" height="148" rx="8" fill="#1e2a3a" filter="url(#shadow)"/>
+  <rect x="60" y="152" width="6" height="148" rx="3" fill="#ff6b35"/>
+  <text x="134" y="196" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ff6b35" text-anchor="middle" letter-spacing="1.5">01</text>
+  <text x="134" y="218" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Stateless</text>
+  <text x="134" y="236" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Passthrough</text>
+  <text x="134" y="264" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#4ade80" text-anchor="middle">Fair</text>
+  <rect x="102" y="271" width="64" height="18" rx="3" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="134" y="284" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#4ade80" text-anchor="middle">DIRECT MAP</text>
+
+  <!-- Flink cell 1 -->
+  <rect x="218" y="152" width="462" height="148" rx="8" fill="url(#flinkCellGrad)"
+        stroke="#E6526F" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="238" y="178" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#E6526F" letter-spacing="1">CONCEPT</text>
+  <text x="238" y="198" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">FlatMapFunction / filter()</text>
+  <text x="238" y="222" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#E6526F" letter-spacing="1">CODE PATTERN</text>
+  <text x="238" y="242" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">stream.filter(json -&gt;</text>
+  <text x="238" y="259" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  node.get("type").equals("click"))</text>
+  <text x="238" y="276" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .sinkTo(kafkaSink)</text>
+  <text x="238" y="294" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4">Latency: sub-millisecond p99</text>
+
+  <!-- Spark cell 1 -->
+  <rect x="690" y="152" width="450" height="148" rx="8" fill="url(#sparkCellGrad)"
+        stroke="#00d4aa" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="710" y="178" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#00d4aa" letter-spacing="1">EQUIVALENT</text>
+  <text x="710" y="198" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">select() / filter()</text>
+  <text x="710" y="222" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#00d4aa" letter-spacing="1">CODE PATTERN</text>
+  <text x="710" y="242" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">df.filter(col("type").isin(</text>
+  <text x="710" y="259" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  "click", "purchase"))</text>
+  <text x="710" y="276" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .writeStream.format("kafka")</text>
+  <text x="710" y="294" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4">Latency: 5–15 ms p99  ·  Catalyst predicate pushdown</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 2 — Tumbling Window
+  ═══════════════════════════════════════ -->
+  <rect x="60" y="314" width="148" height="148" rx="8" fill="#1e2a3a" filter="url(#shadow)"/>
+  <rect x="60" y="314" width="6" height="148" rx="3" fill="#ff6b35"/>
+  <text x="134" y="358" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ff6b35" text-anchor="middle" letter-spacing="1.5">02</text>
+  <text x="134" y="378" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Tumbling</text>
+  <text x="134" y="396" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Window</text>
+  <text x="134" y="414" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8" text-anchor="middle">Count</text>
+  <rect x="102" y="432" width="64" height="18" rx="3" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="134" y="445" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#4ade80" text-anchor="middle">API MAP</text>
+
+  <rect x="218" y="314" width="462" height="148" rx="8" fill="url(#flinkCellGrad)"
+        stroke="#E6526F" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="238" y="340" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#E6526F" letter-spacing="1">CONCEPT</text>
+  <text x="238" y="360" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">TumblingEventTimeWindows</text>
+  <text x="238" y="384" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#E6526F" letter-spacing="1">CODE PATTERN</text>
+  <text x="238" y="404" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.keyBy(Event::getKey)</text>
+  <text x="238" y="421" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.window(TumblingEventTimeWindows</text>
+  <text x="238" y="438" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">    .of(Time.minutes(1)))</text>
+  <text x="238" y="455" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .aggregate(new CountAgg())</text>
+
+  <rect x="690" y="314" width="450" height="148" rx="8" fill="url(#sparkCellGrad)"
+        stroke="#00d4aa" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="710" y="340" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#00d4aa" letter-spacing="1">EQUIVALENT</text>
+  <text x="710" y="360" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">window() + groupBy + agg()</text>
+  <text x="710" y="384" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#00d4aa" letter-spacing="1">CODE PATTERN</text>
+  <text x="710" y="404" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.withWatermark("event_time", "10s")</text>
+  <text x="710" y="421" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.groupBy("key",</text>
+  <text x="710" y="438" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  window(col("event_time"), "1 minute"))</text>
+  <text x="710" y="455" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .agg(count("*"))</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 3 — Sliding Window
+  ═══════════════════════════════════════ -->
+  <rect x="60" y="476" width="148" height="148" rx="8" fill="#1e2a3a" filter="url(#shadow)"/>
+  <rect x="60" y="476" width="6" height="148" rx="3" fill="#ff6b35"/>
+  <text x="134" y="520" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ff6b35" text-anchor="middle" letter-spacing="1.5">03</text>
+  <text x="134" y="540" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Sliding</text>
+  <text x="134" y="558" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Window</text>
+  <text x="134" y="576" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8" text-anchor="middle">Average</text>
+  <rect x="102" y="594" width="64" height="18" rx="3" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="134" y="607" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#4ade80" text-anchor="middle">API MAP</text>
+
+  <rect x="218" y="476" width="462" height="148" rx="8" fill="url(#flinkCellGrad)"
+        stroke="#E6526F" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="238" y="502" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#E6526F" letter-spacing="1">CONCEPT</text>
+  <text x="238" y="522" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">SlidingEventTimeWindows</text>
+  <text x="238" y="546" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#E6526F" letter-spacing="1">CODE PATTERN</text>
+  <text x="238" y="566" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.keyBy(Event::getKey)</text>
+  <text x="238" y="583" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.window(SlidingEventTimeWindows</text>
+  <text x="238" y="600" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">    .of(Time.minutes(2), Time.seconds(30)))</text>
+  <text x="238" y="617" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .aggregate(new AvgAgg())</text>
+
+  <rect x="690" y="476" width="450" height="148" rx="8" fill="url(#sparkCellGrad)"
+        stroke="#00d4aa" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="710" y="502" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#00d4aa" letter-spacing="1">EQUIVALENT</text>
+  <text x="710" y="522" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">window(size, slide) + agg()</text>
+  <text x="710" y="546" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#00d4aa" letter-spacing="1">CODE PATTERN</text>
+  <text x="710" y="566" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.withWatermark("event_time", "10s")</text>
+  <text x="710" y="583" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">.groupBy("key",</text>
+  <text x="710" y="600" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  window(col("et"), "2 minutes", "30 seconds"))</text>
+  <text x="710" y="617" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  .agg(avg("value"))</text>
+
+  <!-- ═══════════════════════════════════════
+       ROW 4 — Keyed State
+  ═══════════════════════════════════════ -->
+  <rect x="60" y="638" width="148" height="148" rx="8" fill="#1e2a3a" filter="url(#shadow)"/>
+  <rect x="60" y="638" width="6" height="148" rx="3" fill="#7c3aed"/>
+  <text x="134" y="682" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#7c3aed" text-anchor="middle" letter-spacing="1.5">04</text>
+  <text x="134" y="702" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Keyed</text>
+  <text x="134" y="720" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">State</text>
+  <text x="134" y="738" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8" text-anchor="middle">Counter</text>
+  <rect x="90" y="754" width="88" height="18" rx="3" fill="#3b0764" stroke="#7c3aed" stroke-width="0.8"/>
+  <text x="134" y="767" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" font-weight="600" fill="#a78bfa" text-anchor="middle">SEM. DIFF</text>
+
+  <rect x="218" y="638" width="462" height="148" rx="8" fill="url(#flinkCellGrad)"
+        stroke="#E6526F" stroke-width="1" stroke-opacity="0.4" filter="url(#shadow)"/>
+  <text x="238" y="664" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#E6526F" letter-spacing="1">CONCEPT</text>
+  <text x="238" y="684" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">KeyedProcessFunction + ValueState</text>
+  <text x="238" y="708" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#E6526F" letter-spacing="1">CODE PATTERN</text>
+  <text x="238" y="728" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">void processElement(Event e, Ctx ctx,</text>
+  <text x="238" y="745" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">    Collector&lt;Result&gt; out) {</text>
+  <text x="238" y="762" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  countState.update(countState.value()+1)</text>
+  <text x="238" y="779" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  out.collect(new Result(...))</text>
+
+  <rect x="690" y="638" width="450" height="148" rx="8" fill="url(#sparkCellGrad)"
+        stroke="#7c3aed" stroke-width="1" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <text x="710" y="664" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#a78bfa" letter-spacing="1">EQUIVALENT</text>
+  <text x="710" y="684" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="14" font-weight="600" fill="#ffffff">transformWithState + StatefulProcessor</text>
+  <text x="710" y="708" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="600" fill="#a78bfa" letter-spacing="1">CODE PATTERN</text>
+  <text x="710" y="728" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">def handleInputRows(self, key, rows, tv):</text>
+  <text x="710" y="745" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  c = self.state.get()[0] if exists else 0</text>
+  <text x="710" y="762" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  self.state.update((c + 1,))</text>
+  <text x="710" y="779" font-family="'Courier New', Courier, monospace"
+        font-size="12" fill="#e0e0e0">  yield Row(key=key[0], count=c+1)</text>
+
+  <!-- Row dividers -->
+  <line x1="60" y1="309" x2="1140" y2="309" stroke="#2d3a52" stroke-width="0.8"/>
+  <line x1="60" y1="471" x2="1140" y2="471" stroke="#2d3a52" stroke-width="0.8"/>
+  <line x1="60" y1="633" x2="1140" y2="633" stroke="#2d3a52" stroke-width="0.8"/>
+
+  <!-- Column divider -->
+  <line x1="680" y1="94" x2="680" y2="790" stroke="#2d3a52" stroke-width="0.8" stroke-dasharray="4 4"/>
+
+  <!-- Footer caption -->
+  <text x="600" y="808" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-style="italic" fill="#4a5568" text-anchor="middle">
+    Figure 2. Side-by-side API comparison for all 4 streaming patterns. Patterns 01–03 map directly; Pattern 04 has semantic differences in state invocation.
+  </text>
+</svg>

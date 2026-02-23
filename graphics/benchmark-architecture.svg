@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  benchmark-architecture.svg
+  Architecture diagram: Data Generator → Kafka (16 partitions)
+  → Flink / Spark (side-by-side, 16 task slots each)
+  → Output Topic → Latency Consumer
+  Canvas: 1200 × 660  |  Background: #1a1a2e
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660"
+     role="img" aria-label="Benchmark architecture diagram for Flink vs Spark RTM latency comparison">
+
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <!-- Kafka gradient -->
+    <linearGradient id="kafkaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3a2010"/>
+      <stop offset="100%" style="stop-color:#2a1808"/>
+    </linearGradient>
+    <!-- Flink gradient -->
+    <linearGradient id="flinkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a1520"/>
+      <stop offset="100%" style="stop-color:#1e1228"/>
+    </linearGradient>
+    <!-- Spark gradient -->
+    <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a2820"/>
+      <stop offset="100%" style="stop-color:#081a28"/>
+    </linearGradient>
+    <!-- Arrow marker – orange -->
+    <marker id="arrOrange" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#ff6b35"/>
+    </marker>
+    <!-- Arrow marker – Flink red -->
+    <marker id="arrFlink" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#E6526F"/>
+    </marker>
+    <!-- Arrow marker – Spark teal -->
+    <marker id="arrSpark" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#00d4aa"/>
+    </marker>
+    <!-- Arrow marker – purple -->
+    <marker id="arrPurple" markerWidth="10" markerHeight="7"
+            refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0,10 3.5,0 7" fill="#7c3aed"/>
+    </marker>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="660" fill="url(#bgGrad)"/>
+
+  <!-- ── Title ── -->
+  <text x="600" y="44" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle"
+        letter-spacing="0.4">Benchmark Architecture</text>
+  <text x="600" y="64" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" fill="#8892a4" text-anchor="middle">
+    End-to-end latency measurement  ·  16 partitions  ·  16 task slots  ·  4 GB memory
+  </text>
+  <line x1="60" y1="78" x2="1140" y2="78" stroke="#2d3a52" stroke-width="1"/>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Data Generator
+  ══════════════════════════════════ -->
+  <rect x="40" y="240" width="158" height="120" rx="10" fill="#1a2a3a"
+        stroke="#8892a4" stroke-width="1.5" filter="url(#shadow)"/>
+  <!-- Icon: terminal -->
+  <rect x="62" y="258" width="36" height="26" rx="4" fill="#2d3a52"/>
+  <text x="80" y="275" font-family="'Courier New', Courier, monospace"
+        font-size="11" fill="#4ade80" text-anchor="middle">&gt;_</text>
+  <text x="119" y="266" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ffffff">Data</text>
+  <text x="119" y="281" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ffffff">Generator</text>
+  <line x1="60" y1="292" x2="180" y2="292" stroke="#2d3a52" stroke-width="1"/>
+  <text x="119" y="308" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">producer.py</text>
+  <text x="119" y="322" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#ff6b35" text-anchor="middle">10K events/sec</text>
+  <text x="119" y="336" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">100 keys · JSON</text>
+  <text x="119" y="352" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">produced_at embedded</text>
+
+  <!-- Arrow: Generator → Kafka Input -->
+  <line x1="200" y1="300" x2="262" y2="300"
+        stroke="#ff6b35" stroke-width="2.5" marker-end="url(#arrOrange)"/>
+  <text x="231" y="292" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#ff6b35" text-anchor="middle">JSON</text>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Kafka Input Topic
+  ══════════════════════════════════ -->
+  <rect x="264" y="210" width="180" height="180" rx="10" fill="url(#kafkaGrad)"
+        stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="354" y="235" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ff6b35" text-anchor="middle"
+        letter-spacing="0.5">Kafka</text>
+  <text x="354" y="252" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#c87a40" text-anchor="middle">benchmark-input</text>
+
+  <!-- Partition bars -->
+  <rect x="284" y="264" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.8"/>
+  <rect x="284" y="276" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.65"/>
+  <rect x="284" y="288" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.5"/>
+  <rect x="284" y="300" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.38"/>
+  <text x="354" y="324" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">16 partitions</text>
+  <text x="354" y="338" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">shared by both engines</text>
+
+  <!-- Resource badges -->
+  <rect x="284" y="352" width="140" height="24" rx="4" fill="#2a1808"/>
+  <text x="354" y="368" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#ff6b35" text-anchor="middle">Consumer group per engine</text>
+
+  <!-- ══════════════════════════════════
+       ARROWS: Kafka → Flink / Spark
+  ══════════════════════════════════ -->
+  <!-- Flink branch arrow -->
+  <path d="M 444 270 L 490 270 L 490 218 L 536 218"
+        stroke="#E6526F" stroke-width="2.5" fill="none" marker-end="url(#arrFlink)"/>
+  <text x="490" y="208" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#E6526F" text-anchor="middle">read</text>
+
+  <!-- Spark branch arrow -->
+  <path d="M 444 340 L 490 340 L 490 392 L 536 392"
+        stroke="#00d4aa" stroke-width="2.5" fill="none" marker-end="url(#arrSpark)"/>
+  <text x="490" y="362" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#00d4aa" text-anchor="middle">readStream</text>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Flink Engine
+  ══════════════════════════════════ -->
+  <rect x="538" y="110" width="200" height="216" rx="10" fill="url(#flinkGrad)"
+        stroke="#E6526F" stroke-width="1.5" filter="url(#shadow)"/>
+  <!-- Flink hexagon icon -->
+  <polygon points="580,128 592,121 604,128 604,142 592,149 580,142"
+           fill="#E6526F" opacity="0.8"/>
+  <text x="592" y="139" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#1a1a2e" text-anchor="middle">F</text>
+  <text x="660" y="134" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="15" font-weight="700" fill="#E6526F" text-anchor="middle">Flink 1.20</text>
+  <text x="638" y="152" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#c97a8a" text-anchor="middle">Java  ·  DataStream API</text>
+  <line x1="554" y1="163" x2="722" y2="163" stroke="#3a2030" stroke-width="1"/>
+
+  <!-- Flink specs -->
+  <text x="554" y="182" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#E6526F">Resources:</text>
+  <text x="554" y="198" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">16 task slots</text>
+  <text x="554" y="214" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">4 GB TaskManager</text>
+  <text x="554" y="230" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">RocksDB state backend</text>
+  <text x="554" y="246" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">Checkpoint: 5s interval</text>
+  <line x1="554" y1="256" x2="722" y2="256" stroke="#3a2030" stroke-width="1"/>
+  <text x="554" y="272" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#E6526F">Patterns: 01 02 03 04</text>
+  <text x="554" y="288" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">parallelism.default = 16</text>
+  <text x="554" y="304" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">execution.checkpointing = 5000</text>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Spark Engine
+  ══════════════════════════════════ -->
+  <rect x="538" y="374" width="200" height="216" rx="10" fill="url(#sparkGrad)"
+        stroke="#00d4aa" stroke-width="1.5" filter="url(#shadow)"/>
+  <circle cx="592" cy="395" r="14" fill="#00d4aa" fill-opacity="0.18" stroke="#00d4aa" stroke-width="1.5"/>
+  <text x="592" y="400" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="800" fill="#00d4aa" text-anchor="middle">S</text>
+  <text x="660" y="401" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="15" font-weight="700" fill="#00d4aa" text-anchor="middle">Spark 4.1 RTM</text>
+  <text x="651" y="419" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#4da89a" text-anchor="middle">Python  ·  DataFrame API</text>
+  <line x1="554" y1="428" x2="722" y2="428" stroke="#0a3028" stroke-width="1"/>
+
+  <!-- Spark specs -->
+  <text x="554" y="447" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#00d4aa">Resources:</text>
+  <text x="554" y="463" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">16 executor cores</text>
+  <text x="554" y="479" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">4 GB executor memory</text>
+  <text x="554" y="495" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">RocksDB state store</text>
+  <text x="554" y="511" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">trigger(realTime="5 min")</text>
+  <line x1="554" y1="521" x2="722" y2="521" stroke="#0a3028" stroke-width="1"/>
+  <text x="554" y="537" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" font-weight="600" fill="#00d4aa">Patterns: 01 02 03 04</text>
+  <text x="554" y="553" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">shuffle.partitions = 20</text>
+  <text x="554" y="569" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a0a8b8">allowlistCheck = false (OSS)</text>
+
+  <!-- ══════════════════════════════════
+       ARROWS: Flink/Spark → Kafka Output
+  ══════════════════════════════════ -->
+  <!-- Flink → output -->
+  <path d="M 738 218 L 784 218 L 784 270 L 820 270"
+        stroke="#E6526F" stroke-width="2.5" fill="none" marker-end="url(#arrFlink)"/>
+  <text x="784" y="210" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#E6526F" text-anchor="middle">write</text>
+
+  <!-- Spark → output -->
+  <path d="M 738 392 L 784 392 L 784 340 L 820 340"
+        stroke="#00d4aa" stroke-width="2.5" fill="none" marker-end="url(#arrSpark)"/>
+  <text x="784" y="382" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#00d4aa" text-anchor="middle">writeStream</text>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Kafka Output Topic
+  ══════════════════════════════════ -->
+  <rect x="822" y="210" width="180" height="180" rx="10" fill="url(#kafkaGrad)"
+        stroke="#ff6b35" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="912" y="235" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="13" font-weight="700" fill="#ff6b35" text-anchor="middle">Kafka</text>
+  <text x="912" y="252" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#c87a40" text-anchor="middle">benchmark-output</text>
+  <rect x="842" y="264" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.8"/>
+  <rect x="842" y="276" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.65"/>
+  <rect x="842" y="288" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.5"/>
+  <rect x="842" y="300" width="140" height="8" rx="2" fill="#ff6b35" opacity="0.38"/>
+  <text x="912" y="324" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">16 partitions</text>
+  <text x="912" y="338" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">+ benchmark-latency</text>
+  <rect x="842" y="352" width="140" height="24" rx="4" fill="#2a1808"/>
+  <text x="912" y="368" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#ff6b35" text-anchor="middle">exactly-once delivery</text>
+
+  <!-- Arrow: Kafka Output → Latency Consumer -->
+  <line x1="1002" y1="300" x2="1060" y2="300"
+        stroke="#7c3aed" stroke-width="2.5" marker-end="url(#arrPurple)"/>
+  <text x="1031" y="291" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="9" fill="#7c3aed" text-anchor="middle">consume</text>
+
+  <!-- ══════════════════════════════════
+       COMPONENT: Latency Consumer
+  ══════════════════════════════════ -->
+  <rect x="1062" y="240" width="158" height="120" rx="10" fill="#1a1428"
+        stroke="#7c3aed" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="1082" y="258" width="36" height="26" rx="4" fill="#2d1850"/>
+  <text x="1100" y="275" font-family="'Courier New', Courier, monospace"
+        font-size="11" fill="#a78bfa" text-anchor="middle">ms</text>
+  <text x="1141" y="264" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ffffff">Latency</text>
+  <text x="1141" y="279" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#ffffff">Consumer</text>
+  <line x1="1078" y1="292" x2="1202" y2="292" stroke="#2d1850" stroke-width="1"/>
+  <text x="1141" y="307" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">measure-latency.py</text>
+  <text x="1141" y="322" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#a78bfa" text-anchor="middle">p50 / p95 / p99</text>
+  <text x="1141" y="337" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">60s windows · 3 runs</text>
+  <text x="1141" y="351" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="10" fill="#8892a4" text-anchor="middle">wall-clock comparison</text>
+
+  <!-- ══════════════════════════════════
+       FAIR COMPARISON CALLOUT BOX
+  ══════════════════════════════════ -->
+  <rect x="40" y="440" width="480" height="100" rx="8" fill="#0f1520"
+        stroke="#2d3a52" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="280" y="462" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#8892a4" text-anchor="middle"
+        letter-spacing="1.5">FAIR COMPARISON SETUP</text>
+  <text x="60" y="482" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Both engines: 16 cores  ·  4 GB memory  ·  16 Kafka partitions</text>
+  <text x="60" y="499" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Same data generator: 10K events/sec, 100 keys, JSON format</text>
+  <text x="60" y="516" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Same latency method: external consumer, wall-clock comparison</text>
+  <text x="60" y="533" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#8892a4">Caveat: single machine, illustrative only, not production-representative</text>
+
+  <!-- ══════════════════════════════════
+       LATENCY RESULTS CALLOUT
+  ══════════════════════════════════ -->
+  <rect x="750" y="440" width="410" height="100" rx="8" fill="#0f1520"
+        stroke="#2d3a52" stroke-width="1" stroke-dasharray="5 3"/>
+  <text x="955" y="462" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-weight="700" fill="#8892a4" text-anchor="middle"
+        letter-spacing="1.5">EXPECTED LATENCY (p99)</text>
+  <!-- Flink row -->
+  <text x="770" y="484" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#E6526F">Flink:</text>
+  <text x="830" y="484" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Stateless &lt;1ms  ·  Stateful low-ms</text>
+  <!-- Spark row -->
+  <text x="770" y="502" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#00d4aa">Spark RTM:</text>
+  <text x="856" y="502" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Stateless 5–15ms  ·  Stateful 100–300ms</text>
+  <text x="770" y="522" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#a0a8b8">Report: median p99 across 3 runs · 60s each</text>
+  <text x="770" y="538" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" fill="#8892a4">produced_at embedded in event  →  consumer_wall_clock - produced_at</text>
+
+  <!-- Footer caption -->
+  <text x="600" y="640" font-family="'Helvetica Neue', Arial, sans-serif"
+        font-size="11" font-style="italic" fill="#4a5568" text-anchor="middle">
+    Figure 3. Benchmark architecture: both engines consume from the same Kafka input topic and write to the same output topic for fair latency comparison.
+  </text>
+</svg>
